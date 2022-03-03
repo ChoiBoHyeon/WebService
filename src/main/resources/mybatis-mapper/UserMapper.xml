@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.webservice.mapper.UserMapper">
+
+    <insert id="createUser" parameterType="com.example.webservice.dto.UserDto">
+        INSERT INTO user (id,
+                          password,
+                          email,
+                          name,
+                          address,
+                          phone_number,
+                          nick_name,
+                          profile_image,
+                          login_key
+        )
+        values (#{id},
+                #{password},
+                #{email},
+                #{name},
+                #{address},
+                #{phoneNumber},
+                #{nickName},
+                #{profileImage},
+                #{loginKey}
+               )
+
+    </insert>
+
+    <select id="findId" resultType="com.example.webservice.dto.UserDto">
+        select *
+        from user
+        where id = #{id}
+    </select>
+
+    <update id="conform">
+        update user
+        set login_key = 1
+        where email = #{email}
+    </update>
+
+    <update id="change">
+        update user
+        set nick_name = #{nickName},
+            phone_number = #{phoneNumber},
+            address = #{address},
+            email = #{email}
+        where id  = #{id}
+    </update>
+</mapper>
