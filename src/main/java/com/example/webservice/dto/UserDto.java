@@ -17,8 +17,12 @@ public class UserDto {
     private String nickName;
     private String profileImage;
     private Integer loginKey;
+    private String verifyPassword;
+    private String birthDate;
+    private String gender;
 
-    public UserDto(Integer id, String password, String email, String name, String address, String phoneNumber, String nickName, String profileImage, Integer loginKey){
+    public UserDto(Integer id, String password, String email, String name, String address, String phoneNumber, String nickName,
+                   String profileImage, Integer loginKey, String verifyPassword, String birthDate, String gender){
         this.id = id;
         this.password = password;
         this.email = email;
@@ -28,6 +32,9 @@ public class UserDto {
         this.nickName = nickName;
         this.profileImage = profileImage;
         this.loginKey = loginKey;
+        this.verifyPassword = verifyPassword;
+        this.birthDate = birthDate;
+        this.gender = gender;
     }
 
 }

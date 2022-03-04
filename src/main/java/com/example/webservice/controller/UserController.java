@@ -45,6 +45,8 @@ public class UserController {
     public ResponseEntity<String> retrieveAllUser(@RequestBody UserDto userDto){
 
         String ResponseEmail = userDto.getEmail(); // 회원가입 할 때 적는 email 값 가져오기
+        String ResponsePassword = userDto.getPassword();
+        String ResponseVerify = userDto.getVerifyPassword();
 
         SimpleMailMessage simpleMessage = new SimpleMailMessage();
         simpleMessage.setSubject("이메일 인증");
@@ -53,8 +55,13 @@ public class UserController {
         simpleMessage.setTo(ResponseEmail);
         javaMailSender.send(simpleMessage);
 
-        userService.createUser(userDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body("email 인증을 따라주세요.");
+        if(ResponsePassword == ResponseVerify) {
+            userService.createUser(userDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body("email 인증을 따라주세요.");
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("바말번호를 다시 확인해주세요.");
+        }
     }
 
     @PostMapping("/webservice/login")
