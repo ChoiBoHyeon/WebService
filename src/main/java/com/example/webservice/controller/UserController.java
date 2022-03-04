@@ -65,7 +65,9 @@ public class UserController {
     }
 
     @PostMapping("/webservice/login")
-    public ResponseEntity retrieveAllUsers(@RequestBody UserDto userDto){
+    public ResponseEntity retrieveAllUsers(
+            @RequestBody UserDto userDto
+    ){
         String ResponsePw = userDto.getPassword();
         String encodePassword = (userService.findId(userDto)).getPassword(); //userService의 로직에 따라 DB에 저장되어 있던 암호화 된 password 불러오기.
         Integer loginkey = (userService.findId(userDto)).getLoginKey();
