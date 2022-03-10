@@ -16,6 +16,7 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+
 mybatis:
   type-aliases-package: com.example.mappertut.model
   mapper-locations: mybatis-mapper/*.xml

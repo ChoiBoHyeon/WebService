@@ -7,6 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 @Transactional
 @Service
 public class UserService {
@@ -20,12 +22,15 @@ public class UserService {
 
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
-
+    LocalDate localDate = LocalDate.now();
     public void createUser(UserDto userDto) {
 
         //해싱
         String encodePassword = passwordEncoder.encode(userDto.getPassword());
         userDto.setPassword(encodePassword);
+
+        //날짜 생성
+        userDto.setBirthDate(localDate);
 
         userMapper.createUser(userDto);
     }
