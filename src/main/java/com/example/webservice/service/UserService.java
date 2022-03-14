@@ -22,7 +22,7 @@ public class UserService {
 
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
-    LocalDate localDate = LocalDate.now();
+//    LocalDate localDate = LocalDate.now();
     public void createUser(UserDto userDto) {
 
         //해싱
@@ -30,7 +30,7 @@ public class UserService {
         userDto.setPassword(encodePassword);
 
         //날짜 생성
-        userDto.setBirthDate(localDate);
+//        userDto.setBirthDate(localDate);
 
         userMapper.createUser(userDto);
     }
@@ -45,6 +45,14 @@ public class UserService {
 
     public void change(UserDto userDto){
         userMapper.change(userDto);
+    }
+
+    public UserDto findName(UserDto userDto) {
+        return userMapper.findName(userDto);
+    }
+
+    public UserDto findEmail(UserDto userDto) {
+        return userMapper.findEmail(userDto);
     }
 
 }

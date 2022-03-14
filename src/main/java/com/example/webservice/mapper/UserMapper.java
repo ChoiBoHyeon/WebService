@@ -14,4 +14,8 @@ public interface UserMapper {
     void conform(String email);
 
     void change(UserDto userDto);
+
+    UserDto findName(UserDto userDto);
+
+    UserDto findEmail(UserDto userDto);
 }

@@ -29,7 +29,7 @@ public class UserController {
     private UserService userService;
     private JavaMailSender javaMailSender;
 
-    @GetMapping("webservice/certification/conform/{email}")
+    @GetMapping("/webservice/certification/conform/{email}")
     public void conform(@PathVariable("email") String email) {
         userService.conform(email);
     }
@@ -51,8 +51,8 @@ public class UserController {
 
         SimpleMailMessage simpleMessage = new SimpleMailMessage();
         simpleMessage.setSubject("이메일 인증");
-        simpleMessage.setText("url : localhost:8080/webservice/certification/conform/"
-                + userDto.getEmail() + " 링크로 이동해 회원가입을 해주세요");
+        simpleMessage.setText("url : http://203.250.32.29:8080/api/webservice/certification/conform/"
+                + userDto.getEmail() + " 링크로 이동해 email인증을 해주세요");
         simpleMessage.setTo(ResponseEmail);
         javaMailSender.send(simpleMessage);
         String userPassword = userDto.getPassword();
@@ -87,8 +87,24 @@ public class UserController {
             return "0"; // 2 = 새로운 페이지 (User의 이메일에 보낸 주소를 다시 보여주며 인증을 해달라고 하기) (이메일 인증 안했을 때)
         }
         else {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("비밀번호가 틀렸습니다!");
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("비밀번호가 확인해주세요!");
             return "2"; // 0 = 로그인페이지 (비밀번호가 틀렸을 때)
         }
     }
+
+    @PostMapping ("/webservice/findUserid")
+    public ResponseEntity<String> FindUserId (@RequestBody UserDto userDto){
+
+        String ResponseName = userDto.getName();
+        String ResponseEmail = userDto.getEmail();
+        String DBName = (userService.findName(userDto)).getName();
+        String DBEmail = (userService.findEmail(userDto)).getEmail();
+
+        if(ResponseName.matches(DBName) && ResponseEmail.matches(DBEmail)){
+            return ResponseEntity.status(HttpStatus.OK).body(userDto.getId());
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("회원가입이 되어 있지 않은 유저입니다.");
+        }
+    }
 }
+
