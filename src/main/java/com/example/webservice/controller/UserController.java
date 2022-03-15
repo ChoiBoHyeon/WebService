@@ -92,18 +92,30 @@ public class UserController {
         }
     }
 
+    @RequestParam
     @PostMapping ("/webservice/findUserid")
     public ResponseEntity<String> FindUserId (@RequestBody UserDto userDto){
 
-        String ResponseName = userDto.getName();
-        String ResponseEmail = userDto.getEmail();
-        String DBName = (userService.findName(userDto)).getName();
+//        String ResponseName = userDto.getName();
+//        String ResponseEmail = userDto.getEmail();
+        String DBName;
+        DBName = (userService.findName(userDto)).getName();
+        if (DBName == null){
+            throw new UserNotFoundException("사용자의 이름으로 된 아이디가 없습니다.");
+        }
         String DBEmail = (userService.findEmail(userDto)).getEmail();
+        if (DBEmail == null){
+            throw new UserNotFoundException("사용자의 이메일로 된 아이디가 없습니다.");
+        }
+        String DBId = (userService.findName(userDto)).getId();
 
-        if(ResponseName.matches(DBName) && ResponseEmail.matches(DBEmail)){
-            return ResponseEntity.status(HttpStatus.OK).body(userDto.getId());
+        if(DBName != null && DBEmail != null ){
+            return ResponseEntity.status(HttpStatus.OK).body(DBId);
+        } else if(DBName == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자의 이름으로 된 아이디가 없습니다.");
+//            throw new UserNotFoundException(String.format("[%s]로 회원가입한 유저가 없습니다.",ResponseName));
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("회원가입이 되어 있지 않은 유저입니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("이메일을 다시 확인해주세요.");
         }
     }
 }
