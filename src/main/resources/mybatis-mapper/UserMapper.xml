@@ -25,6 +25,12 @@
 
     </insert>
 
+    <update id="create">
+        update user
+        set login_key = 0
+        where id = #{id}
+    </update>
+
     <select id="findId" resultType="com.example.webservice.dto.UserDto">
         select *
         from user

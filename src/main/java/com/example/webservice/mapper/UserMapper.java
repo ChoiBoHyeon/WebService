@@ -13,6 +13,8 @@ public interface UserMapper {
 
     void conform(String email);
 
+    void create(String id);
+
     void change(UserDto userDto);
 
     UserDto findName(UserDto userDto);

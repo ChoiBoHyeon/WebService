@@ -1,5 +1,6 @@
 package com.example.webservice.service;
 
+import com.example.webservice.controller.UserNotFoundException;
 import com.example.webservice.dto.UserDto;
 import com.example.webservice.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Transactional
 @Service
@@ -35,13 +37,20 @@ public class UserService {
         userMapper.createUser(userDto);
     }
 
+    public void create(String id){
+        userMapper.create(id);
+    }
+
     public UserDto findId(UserDto userDto){
+        //NPE 예외처리
+
         return userMapper.findId(userDto);
     }
 
     public void conform(String email){
         userMapper.conform(email);
     }
+
 
     public void change(UserDto userDto){
         userMapper.change(userDto);
