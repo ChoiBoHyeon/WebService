@@ -123,6 +123,7 @@ public class UserController {
         try {
             DBEmail = (userService.findEmail(userDto)).getEmail();
             }
+        
         catch (java.lang.NullPointerException e) {
             throw new NullPointerException("유저님의 이메일로 된 아이디가 없습니다.");
             //throw new UserNotFoundException("사용자의 이메일로 된 아이디가 없습니다.");
