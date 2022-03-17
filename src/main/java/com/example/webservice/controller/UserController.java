@@ -11,8 +11,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping(value = "/api")
 @CrossOrigin
@@ -68,7 +66,7 @@ public class UserController {
             userService.create(ResponseId);
             log.info("회원가입 완료");
             return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 완료");
-        } else{
+        } else {
             log.info("비밀번호 확인하세요");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("비밀번호 확인하세요");
         }
@@ -84,7 +82,13 @@ public class UserController {
     public String retrieveAllUsers(@RequestBody UserDto userDto){
         log.info(userDto.toString());
         String ResponsePw = userDto.getPassword();
-        String encodePassword = (userService.findId(userDto)).getPassword(); //userService의 로직에 따라 DB에 저장되어 있던 암호화 된 password 불러오기.
+        String encodePassword;
+        try {
+            encodePassword = (userService.findId(userDto)).getPassword(); //userService의 로직에 따라 DB에 저장되어 있던 암호화 된 password 불러오기.
+            }
+        catch (java.lang.NullPointerException e1) {
+            return "2"; // 2 = DB에 저장된 아이디가 없을 경우 (아이디가 없을 때)
+        }
         Integer loginkey = (userService.findId(userDto)).getLoginKey();
 
         log.info("로그인 시도");
@@ -107,7 +111,7 @@ public class UserController {
 
 
     @PostMapping (value = "/webservice/findUserid")
-    public ResponseEntity<String> FindUserId (@RequestBody UserDto userDto){
+    public String FindUserId (@RequestBody UserDto userDto){
         log.info(userDto.toString());
 //        String ResponseName = userDto.getName();
 //        String ResponseEmail = userDto.getEmail();
@@ -117,29 +121,28 @@ public class UserController {
             DBName = (userService.findName(userDto)).getName();
             }
         catch (java.lang.NullPointerException e) {
-            throw new NullPointerException("유저님의 이름으로 된 아이디가 없습니다.");
+            //throw new NullPointerException("유저님의 이름으로 된 아이디가 없습니다.");
+            return "0"; // 0 = 검색한 Name이 DB에 저장되지 않았을 경우
             //return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저님의 이름으로 된 아이디가 없습니다.");
         }
         try {
             DBEmail = (userService.findEmail(userDto)).getEmail();
             }
-        
         catch (java.lang.NullPointerException e) {
-            throw new NullPointerException("유저님의 이메일로 된 아이디가 없습니다.");
-            //throw new UserNotFoundException("사용자의 이메일로 된 아이디가 없습니다.");
+            //throw new NullPointerException("유저님의 이메일로 된 아이디가 없습니다.");
+            return "1"; // 1 = 검색한 Email이 DB에 저장되지 않았을 경우
             }
         String DBId = (userService.findName(userDto)).getId();
 
         if(DBName != null && DBEmail != null ) {
-            return ResponseEntity.status(HttpStatus.OK).body(DBId);
+            return DBId;
         }
-//        } else if(DBName == null){
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자의 이름으로 된 아이디가 없습니다.");
-////            throw new UserNotFoundException(String.format("[%s]로 회원가입한 유저가 없습니다.",ResponseName));
-//        } else {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("이메일을 다시 확인해주세요.");
-//        }
         return null;
     }
+
+//    @PostMapping (value = "/webservice/findUserpassword")
+//    public String FindUserPassword (@RequestBody UserDto userDto){
+//
+//    }
 }
 
