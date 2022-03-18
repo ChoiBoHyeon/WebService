@@ -63,4 +63,11 @@
             email = #{email}
         where id  = #{id}
     </update>
+
+    <update id= "changeRendomPassword">
+        UPDATE user
+        SET password = #{password}
+        where email  = #{email}
+        and id = #{id}
+    </update>
 </mapper>

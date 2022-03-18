@@ -140,9 +140,40 @@ public class UserController {
         return null;
     }
 
-//    @PostMapping (value = "/webservice/findUserpassword")
-//    public String FindUserPassword (@RequestBody UserDto userDto){
-//
-//    }
+    @PostMapping (value = "/webservice/findUserpassword")
+    public String FindUserPassword (@RequestBody UserDto userDto){
+        String ResponseEmail = userDto.getEmail(); // 입력한 email 값 가져오기
+        String DBEmail;
+        String DBId;
+        String ChangeUserPassword = userService.RendomPassword();
+
+        try {
+            DBId = (userService.findId(userDto)).getId();
+            }
+        catch (java.lang.NullPointerException e) {
+            return "3"; // 3 = 입력한 ID가 없을 때
+        }
+
+        try {
+            DBEmail = (userService.findEmail(userDto).getEmail());
+        }
+        catch (java.lang.NullPointerException e) {
+            return "0"; // 0 = 입력한 ID가 없을 때
+        }
+        if (ResponseEmail.matches(DBEmail) && DBId != null ) {
+            SimpleMailMessage simpleMessage = new SimpleMailMessage();
+            simpleMessage.setSubject("비밀번호 초기화");
+            simpleMessage.setText("비밀번호가 초기화 되었습니다. 초기화 된 비밀번호는 ["
+                    + ChangeUserPassword + "] 입니다.");
+            simpleMessage.setTo(ResponseEmail);
+            javaMailSender.send(simpleMessage);
+            userDto.setPassword(ChangeUserPassword);
+            userDto.setId(DBId);
+            userService.changeRendomPassword(userDto);
+
+            return "회원님의 이메일로 임시 비밀번호를 보냈습니다.";
+        }
+        return null;
+    }
 }
 

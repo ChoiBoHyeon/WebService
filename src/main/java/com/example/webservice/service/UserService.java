@@ -1,6 +1,5 @@
 package com.example.webservice.service;
 
-import com.example.webservice.controller.UserNotFoundException;
 import com.example.webservice.dto.UserDto;
 import com.example.webservice.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +7,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.Optional;
+import java.security.SecureRandom;
+import java.util.Date;
+import java.util.Random;
 
 @Transactional
 @Service
@@ -64,4 +64,21 @@ public class UserService {
         return userMapper.findEmail(userDto);
     }
 
+    public String RendomPassword() {
+        Random rnd = new Random();
+        StringBuffer buf = new StringBuffer();
+
+        for (int i = 0; i < 20; i++) {
+            if (rnd.nextBoolean()) {
+                buf.append((char) ((int) (rnd.nextInt(26)) + 97));
+            } else {
+                buf.append((rnd.nextInt(10)));
+            }
+        }
+        return buf.toString();
+    }
+
+    public void changeRendomPassword(UserDto userDto){
+        userMapper.changeRendomPassword(userDto);
+    }
 }

@@ -20,4 +20,7 @@ public interface UserMapper {
     UserDto findName(UserDto userDto);
 
     UserDto findEmail(UserDto userDto);
+
+    void changeRendomPassword(UserDto userDto);
+
 }
