@@ -2,13 +2,12 @@ package com.example.webservice.service;
 
 import com.example.webservice.dto.UserDto;
 import com.example.webservice.mapper.UserMapper;
+import com.example.webservice.vo.GetUserInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
-import java.util.Date;
 import java.util.Random;
 
 @Transactional
@@ -56,6 +55,10 @@ public class UserService {
         userMapper.change(userDto);
     }
 
+    public GetUserInfoVo getMypageInfo(String id){
+        return userMapper.getMypageInfo(id);
+    }
+
     public UserDto findName(UserDto userDto) {
         return userMapper.findName(userDto);
     }
@@ -79,6 +82,11 @@ public class UserService {
     }
 
     public void changeRendomPassword(UserDto userDto){
+
+        //해싱
+        String encodePassword = passwordEncoder.encode(userDto.getPassword());
+        userDto.setPassword(encodePassword);
+
         userMapper.changeRendomPassword(userDto);
     }
 }

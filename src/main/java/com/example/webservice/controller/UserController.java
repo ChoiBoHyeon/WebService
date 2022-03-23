@@ -1,7 +1,9 @@
 package com.example.webservice.controller;
 
 import com.example.webservice.dto.UserDto;
+import com.example.webservice.service.SecurityService;
 import com.example.webservice.service.UserService;
+import com.example.webservice.vo.GetUserInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping(value = "/api")
 @CrossOrigin
@@ -19,12 +24,14 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     @Autowired
-    public UserController(PasswordEncoder passwordEncoder, UserService userService, JavaMailSender javaMailSender) {
+    public UserController(PasswordEncoder passwordEncoder, UserService userService, JavaMailSender javaMailSender, SecurityService securityService) {
         this.javaMailSender = javaMailSender;
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
+        this.securityService = securityService;
     }
 
+    private SecurityService securityService;
     private PasswordEncoder passwordEncoder;
     private UserService userService;
     private JavaMailSender javaMailSender;
@@ -40,7 +47,7 @@ public class UserController {
             @RequestBody UserDto userDto){
         userDto.setId(id);
         userService.change(userDto);
-        return ResponseEntity.status(HttpStatus.OK).body("changed Id = "+ id);
+        return ResponseEntity.status(HttpStatus.OK).body(userDto); //vo
     }
 
 
@@ -83,6 +90,7 @@ public class UserController {
         log.info(userDto.toString());
         String ResponsePw = userDto.getPassword();
         String encodePassword;
+        String RespinseId = userDto.getId();
         try {
             encodePassword = (userService.findId(userDto)).getPassword(); //userService의 로직에 따라 DB에 저장되어 있던 암호화 된 password 불러오기.
             }
@@ -99,8 +107,12 @@ public class UserController {
             return "0"; // 0 = 새로운 페이지 (User의 이메일에 보낸 주소를 다시 보여주며 인증을 해달라고 하기) (이메일 인증 안했을 때)
         } else if (passwordEncoder.matches(ResponsePw,encodePassword) && loginkey == 1){
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("회원가입을 해주세요! 만약 했다면 이메일 인증을 해주세요!"); // 실패한다면 실패!
+
+            String token = securityService.createToken(RespinseId, (2*60*1000)); //토큰 만료시간 2분
+//            Map<Object> map = new LinkedHashMap<>();
+//            map.put(token,token);
             log.info("로그인 성공");
-            return "1"; // 1 = 마이페이지 (로그인 성공 시)
+            return "1 " + token; // 1 = 마이페이지 (로그인 성공 시)
         }
         else {
             log.info("비밀번호 틀림");
@@ -171,9 +183,17 @@ public class UserController {
             userDto.setId(DBId);
             userService.changeRendomPassword(userDto);
 
-            return "회원님의 이메일로 임시 비밀번호를 보냈습니다.";
+            return "1"; // 회원님의 이메일로 임시 비밀번호를 보냈습니다.
         }
         return null;
     }
+
+    @GetMapping("/webservice/test/{id}")
+    public ResponseEntity<GetUserInfoVo> getUserInfo(
+            @PathVariable("id") String id){
+        GetUserInfoVo getUserInfoVo = userService.getMypageInfo(id);
+        return ResponseEntity.status(HttpStatus.OK).body(getUserInfoVo); //vo
+    }
+
 }
 

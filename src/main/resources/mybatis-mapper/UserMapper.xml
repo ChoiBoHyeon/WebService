@@ -55,10 +55,16 @@
         where email = #{email}
     </update>
 
+    <select id="getMypageInfo" resultType="com.example.webservice.vo.GetUserInfoVo">
+        select *
+        from user
+        where id = #{id}
+    </select>
+
     <update id="change">
         update user
         set nick_name = #{nickName},
-            phone_number = #{phoneNumber},
+            password = #{password},
             name  = #{name},
             email = #{email}
         where id  = #{id}

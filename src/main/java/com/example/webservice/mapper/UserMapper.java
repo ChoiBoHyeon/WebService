@@ -2,6 +2,7 @@ package com.example.webservice.mapper;
 
 
 import com.example.webservice.dto.UserDto;
+import com.example.webservice.vo.GetUserInfoVo;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -16,6 +17,8 @@ public interface UserMapper {
     void create(String id);
 
     void change(UserDto userDto);
+
+    GetUserInfoVo getMypageInfo(String id);
 
     UserDto findName(UserDto userDto);
 
