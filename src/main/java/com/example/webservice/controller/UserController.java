@@ -13,9 +13,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 @RestController
 @RequestMapping(value = "/api")
 @CrossOrigin
@@ -35,6 +32,7 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
     private UserService userService;
     private JavaMailSender javaMailSender;
+    String token;
 
     @GetMapping("/webservice/certification/conform/{email}")
     public void conform(@PathVariable("email") String email) {
@@ -45,6 +43,7 @@ public class UserController {
     public ResponseEntity change(
             @PathVariable("id") String id,
             @RequestBody UserDto userDto){
+        //securityService.getSubject(token);
         userDto.setId(id);
         userService.change(userDto);
         return ResponseEntity.status(HttpStatus.OK).body(userDto); //vo
@@ -108,11 +107,9 @@ public class UserController {
         } else if (passwordEncoder.matches(ResponsePw,encodePassword) && loginkey == 1){
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("회원가입을 해주세요! 만약 했다면 이메일 인증을 해주세요!"); // 실패한다면 실패!
 
-            String token = securityService.createToken(RespinseId, (2*60*1000)); //토큰 만료시간 2분
-//            Map<Object> map = new LinkedHashMap<>();
-//            map.put(token,token);
+            token = securityService.createToken(RespinseId, (2*60*1000)); //토큰 만료시간 2분
             log.info("로그인 성공");
-            return "1 " + token; // 1 = 마이페이지 (로그인 성공 시)
+            return "1 "; //+ token; // 1 = 마이페이지 (로그인 성공 시)
         }
         else {
             log.info("비밀번호 틀림");
